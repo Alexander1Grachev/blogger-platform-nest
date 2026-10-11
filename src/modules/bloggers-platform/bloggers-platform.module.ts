@@ -21,19 +21,15 @@ import { Comment, CommentSchema } from './comments/domain/comment.entity';
 import { CommentsController } from './comments/api/comments.controller';
 import { CommentsQueryRepository } from './comments/infrastructure/query/comments.query-repository';
 
-
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Blog.name, schema: BlogSchema },
       { name: Post.name, schema: PostSchema },
       { name: Comment.name, schema: CommentSchema },
-    ])
+    ]),
   ],
-  controllers: [
-    BlogsController,
-    PostsController,
-    CommentsController],
+  controllers: [BlogsController, PostsController, CommentsController],
   providers: [
     BlogsService,
     BlogsRepository,
@@ -46,6 +42,6 @@ import { CommentsQueryRepository } from './comments/infrastructure/query/comment
     // CommentsService,
     //CommentsRepository,
     CommentsQueryRepository,
-  ]
+  ],
 })
-export class BloggersPlatformModule { }
+export class BloggersPlatformModule {}

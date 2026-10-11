@@ -5,6 +5,9 @@ import { CommentViewDto } from "../../api/view-dto/comments.view-dto";
 import { PaginatedViewDto } from "src/core/dto/base.paginated.view-dto";
 import { QueryFilter } from "mongoose";
 import { GetCommentsQueryParams } from "../../api/input-dto/get-comments-query-params.input-dto";
+import { DomainException } from "src/core/exceptions/domain-exceptions";
+import { DomainExceptionCode } from "src/core/exceptions/domain-exception-codes";
+import { CommentDomainErrors } from "../../domain/comment.errors";
 
 
 
@@ -20,8 +23,12 @@ export class CommentsQueryRepository {
       _id: id,
       deletedAt: null
     });
+
     if (!comment) {
-      throw new NotFoundException('comment not found')
+      throw new DomainException({
+        code: DomainExceptionCode.NotFound,
+        message: CommentDomainErrors.NOT_FOUND,
+      });
     }
     return CommentViewDto.mapToView(comment);
   }

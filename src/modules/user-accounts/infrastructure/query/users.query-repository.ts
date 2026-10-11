@@ -1,4 +1,4 @@
-import { User, type UserModelType } from '../../domain/user.entity';
+import { User, UserDocument, type UserModelType } from '../../domain/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserViewDto } from '../../api/view-dto/users.view-dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -6,6 +6,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { QueryFilter } from 'mongoose';// старый FilterQuery
 import { PaginatedViewDto } from '../../../../core/dto/base.paginated.view-dto';
 import { GetUsersQueryParams } from '../../api/input-dto/get-users-query-params.input-dto';
+import { DomainException } from 'src/core/exceptions/domain-exceptions';
+import { DomainExceptionCode } from 'src/core/exceptions/domain-exception-codes';
 
 @Injectable()
 export class UsersQueryRepository {
@@ -21,7 +23,10 @@ export class UsersQueryRepository {
     });
 
     if (!user) {
-      throw new NotFoundException('user not found');
+      throw new DomainException({
+        code: DomainExceptionCode.NotFound,
+        message: 'User not found',
+      });
     }
 
     return UserViewDto.mapToView(user);
@@ -47,7 +52,7 @@ export class UsersQueryRepository {
         email: { $regex: query.searchEmailTerm, $options: 'i' },
       });
     }
-
+   
     const users = await this.UserModel.find(filter)
       .sort({ [query.sortBy]: query.sortDirection })
       .skip(query.calculateSkip())

@@ -2,6 +2,9 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Model, Types } from "mongoose";
 import { CreateBlogDomainDto } from "./dto/create-blog.domain.dto";
 import { UpdateBlogDto } from "../dto/blog.dto";
+import { DomainException } from "src/core/exceptions/domain-exceptions";
+import { DomainExceptionCode } from "src/core/exceptions/domain-exception-codes";
+import { CommonDomainErrors } from "src/core/exceptions/common-domain-errors";
 
 @Schema({ timestamps: true })
 export class Blog {
@@ -40,7 +43,10 @@ export class Blog {
 
   makeDeleted() {
     if (this.deletedAt !== null) {
-      throw new Error('Entity already deleted');
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: CommonDomainErrors.ALREADY_DELETED,
+      });
     }
     this.deletedAt = new Date();
   }
@@ -58,3 +64,6 @@ BlogSchema.loadClass(Blog);
 export type BlogDocument = HydratedDocument<Blog>;
 
 export type BlogModelType = Model<BlogDocument> & typeof Blog;
+
+
+

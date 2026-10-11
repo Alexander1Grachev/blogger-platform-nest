@@ -13,6 +13,7 @@ import { PostsQueryRepository } from "../../posts/infrastructure/query/posts.que
 import { CreatePostForBlogInputDto, CreatePostInputDto } from "../../posts/api/input-dto/posts.input-dto.ts";
 import { PostsService } from "../../posts/application/posts.service";
 import { ApiParam } from "@nestjs/swagger";
+import { ObjectIdValidationPipe } from "src/core/pipes/object-id-validation-transformation-pipe.service";
 
 
 @Controller('blogs')
@@ -37,7 +38,7 @@ export class BlogsController {
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
-    @Param('id') id: string,
+    @Param('id', ObjectIdValidationPipe) id: string,
     @Body() body: UpdateBlogInputDto
   ): Promise<void> {
     return this.blogsService.update(id, body);
@@ -46,14 +47,14 @@ export class BlogsController {
   @ApiParam({ name: 'id' })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@Param('id') id: string): Promise<void> {
+  async delete(@Param('id', ObjectIdValidationPipe) id: string): Promise<void> {
 
     return this.blogsService.delete(id);
   }
 
   @ApiParam({ name: 'id' })
   @Get(':id')
-  async getById(@Param('id') id: string): Promise<BlogViewDto> {
+  async getById(@Param('id', ObjectIdValidationPipe) id: string): Promise<BlogViewDto> {
     return this.blogsQueryRepository.getByIdOrNotFoundFail(id);
   }
 
@@ -65,7 +66,7 @@ export class BlogsController {
   @Get('/:id/posts')
   async getPostsList(
     @Query() query: GetPostsQueryParams,
-    @Param('id') blogId: string
+    @Param('id', ObjectIdValidationPipe) blogId: string
   ): Promise<PaginatedViewDto<PostViewDto[]>> {
 
     await this.blogsRepository.findOrNotFoundFail(blogId);
@@ -76,7 +77,7 @@ export class BlogsController {
   @Post('/:id/posts')
   @HttpCode(HttpStatus.CREATED)
   async createPostForBlog(
-    @Param('id') blogId: string,
+    @Param('id', ObjectIdValidationPipe) blogId: string,
     @Body() body: CreatePostForBlogInputDto,
   ): Promise<PostViewDto> {
     const postId = await this.postsService.create({

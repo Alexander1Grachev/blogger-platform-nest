@@ -3,6 +3,9 @@ import { HydratedDocument, Model, Types } from "mongoose";
 import { ExtendedLikesInfoViewDto } from "../api/view-dto/extended-likes-info.view-dto";
 import { CreatePostDomainDto } from "./dto/create-post.domain.dto";
 import { UpdatePostDto } from "../dto/post.dto";
+import { DomainException } from "src/core/exceptions/domain-exceptions";
+import { DomainExceptionCode } from "src/core/exceptions/domain-exception-codes";
+import { CommonDomainErrors } from "src/core/exceptions/common-domain-errors";
 
 
 @Schema({ timestamps: true })
@@ -41,11 +44,14 @@ export class Post {
 
   makeDeleted() {
     if (this.deletedAt !== null) {
-      throw new Error('Entity already deleted');
+      throw new DomainException({
+        code: DomainExceptionCode.BadRequest,
+        message: CommonDomainErrors.ALREADY_DELETED,
+      });
     }
     this.deletedAt = new Date();
   }
-  
+
   update(dto: UpdatePostDto): void {
     this.title = dto.title;
     this.shortDescription = dto.shortDescription;

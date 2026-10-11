@@ -5,6 +5,9 @@ import { BlogViewDto } from "../../api/view-dto/blogs.view-dto";
 import { PaginatedViewDto } from "src/core/dto/base.paginated.view-dto";
 import { QueryFilter } from 'mongoose';// старый FilterQuery
 import { GetBlogsQueryParams } from "../../api/input-dto/get-blogs-query-params.input-dto";
+import { DomainException } from "src/core/exceptions/domain-exceptions";
+import { DomainExceptionCode } from "src/core/exceptions/domain-exception-codes";
+import { BlogDomainErrors } from "../../domain/blog.errors";
 
 @Injectable()
 export class BlogsQueryRepository {
@@ -18,10 +21,13 @@ export class BlogsQueryRepository {
       _id: id,
       deletedAt: null,
     })
+    
     if (!blog) {
-      throw new NotFoundException('blog not found');
+      throw new DomainException({
+        code: DomainExceptionCode.NotFound,
+        message: BlogDomainErrors.NOT_FOUND,
+      });
     }
-
     return BlogViewDto.mapToView(blog);
   }
 

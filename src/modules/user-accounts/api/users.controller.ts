@@ -8,6 +8,7 @@ import {
     Param,
     Post,
     Query,
+    UseGuards,
 } from '@nestjs/common';
 import { UsersService } from '../application/users.service';
 import { UserViewDto } from './view-dto/users.view-dto';
@@ -16,7 +17,12 @@ import { GetUsersQueryParams } from './input-dto/get-users-query-params.input-dt
 import { UsersQueryRepository } from '../infrastructure/query/users.query-repository';
 import { CreateUserInputDto } from './input-dto/users.input-dto';
 import { ApiParam } from '@nestjs/swagger';
+import { BasicAuthGuard } from '../guards/basic/basic-auth.guard';
+import { LocalAuthGuard } from '../guards/local/local-auth.guard';
 
+
+
+@UseGuards(BasicAuthGuard)
 @Controller('users')
 export class UsersController {
     constructor(
@@ -36,7 +42,7 @@ export class UsersController {
     async create(
         @Body() body: CreateUserInputDto,
     ): Promise<UserViewDto> {
-        const userId = await this.usersService.create(body);
+        const userId = await this.usersService.createUser(body);
         return this.usersQueryRepository.getByIdOrNotFoundFail(userId);
     }
 

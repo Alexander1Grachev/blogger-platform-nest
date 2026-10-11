@@ -5,4 +5,5 @@ export const PATHS = {
   COMMENTS: '/comments',
   USERS: '/users',
   TESTING_CLEAR: '/testing',
+  AUTH: '/auth'
 } as const

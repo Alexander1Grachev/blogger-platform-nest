@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Blog, BlogDocument, type BlogModelType } from "../domain/blog.entity";
+import { DomainExceptionCode } from "src/core/exceptions/domain-exception-codes";
+import { BlogDomainErrors } from "../domain/blog.errors";
+import { DomainException } from "src/core/exceptions/domain-exceptions";
 
 @Injectable()
 export class BlogsRepository {
@@ -25,10 +28,11 @@ export class BlogsRepository {
     const blog = await this.findById(id);
 
     if (!blog) {
-      //TODO: replace with domain exception
-      throw new NotFoundException('blog not found');
+      throw new DomainException({
+        code: DomainExceptionCode.NotFound,
+        message: BlogDomainErrors.NOT_FOUND,
+      });
     }
-
     return blog;
   }
 }

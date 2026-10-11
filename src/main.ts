@@ -6,11 +6,10 @@ import { appSetup } from './setup/app.setup';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  appSetup(app);
+  const port = appSetup(app);
 
-  const PORT = process.env.PORT || 5005; //TODO: move to configService.
-  await app.listen(PORT, () => {
-    console.log('Server is running on port ' + PORT);
+  await app.listen(port, () => {
+    console.log('Server is running on port ' + port);
   });
 }
 bootstrap();

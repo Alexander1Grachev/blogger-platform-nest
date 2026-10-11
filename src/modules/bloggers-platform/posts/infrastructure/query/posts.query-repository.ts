@@ -5,6 +5,9 @@ import { PaginatedViewDto } from "src/core/dto/base.paginated.view-dto";
 import { PostViewDto } from "../../api/view-dto/posts.view-dto";
 import { QueryFilter } from "mongoose";
 import { GetPostsQueryParams } from "../../api/input-dto/get-posts-query-params.input-dto";
+import { DomainException } from "src/core/exceptions/domain-exceptions";
+import { DomainExceptionCode } from "src/core/exceptions/domain-exception-codes";
+import { PostDomainErrors } from "../../domain/post.errors";
 
 @Injectable()
 export class PostsQueryRepository {
@@ -18,7 +21,10 @@ export class PostsQueryRepository {
       deletedAt: null,
     });
     if (!post) {
-      throw new NotFoundException('post not found')
+      throw new DomainException({
+        code: DomainExceptionCode.NotFound,
+        message: PostDomainErrors.NOT_FOUND,
+      });
     }
     return PostViewDto.mapToView(post);
   }
